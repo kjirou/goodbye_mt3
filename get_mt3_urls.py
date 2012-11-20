@@ -16,23 +16,29 @@ from pyquery import PyQuery
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MT_ARCHIVES_URL = 'http://kjirou.sakura.ne.jp/mt/archives.html'
-WP_ARCHIVES_URL = BASE_DIR + '/data/wordpress.2012-11-20.xml'
+WP_ARCHIVES_FILE_PATH = BASE_DIR + '/data/wordpress.2012-11-20.xml'
 
 def _main():
+    # u'<title>':'<url>' sets
     mt_pages = {}
     wp_pages = {}
 
     # MT
     request = requests.get(MT_ARCHIVES_URL)
-    content = request.content.decode('utf8')
-    document = PyQuery(content);
+    document = PyQuery(request.content);
     archive_list = document('#pagebody .archive-list a')
     for archive in archive_list:
         archive = PyQuery(archive)
-        mt_pages[unicode(archive.text())] = unicode(archive.attr('href'))
-
-    print mt_pages
+        mt_pages[archive.text()] = archive.attr('href')
 
     # WP
+    fh = open(WP_ARCHIVES_FILE_PATH, 'r')
+    document = PyQuery(fh.read(), parser='xml');
+    items = document('channel item')
+    for item in items:
+        item = PyQuery(item)
+        wp_pages[item('title').text()] = item('link').text()
+
+    print wp_pages
 
 _main()
