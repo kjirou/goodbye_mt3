@@ -46,6 +46,7 @@ def _main():
             ))
     fh.write('Redirect permanent /mt/index.xml http://blog.kjirou.net/feed\n')
     fh.write('Redirect permanent /mt/atom.xml http://blog.kjirou.net/feed\n')
+    fh.write('Redirect permanent /mt/archives.html http://blog.kjirou.net\n')
     fh.write('Redirect permanent /mt http://blog.kjirou.net\n')
 
 _main()
