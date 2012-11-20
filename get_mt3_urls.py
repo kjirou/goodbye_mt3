@@ -1,16 +1,12 @@
 # -*- encoding:utf8 -*-
 u'''
-Crawl the Movable Type 3 "archives.html" page and it parse to url-title sets
+Create .htaccess for redirect from old Movable Type 3 to new WordPress 3
 
 @python == 2.6.6
 @dependency requests v0.14.2 <http://pypi.python.org/pypi/requests>
 @dependency pyquery v1.2.2 <http://pypi.python.org/pypi/pyquery>
 '''
 import os
-import sys
-import re
-import getopt
-import traceback
 import requests
 from pyquery import PyQuery
 
@@ -39,6 +35,16 @@ def _main():
         item = PyQuery(item)
         wp_pages[item('title').text()] = item('link').text()
 
-    print wp_pages
+    # Create .htaccess
+    fh = open(BASE_DIR + '/tmp/.htaccess', 'a')
+    for title, href in mt_pages.items():
+        if title in wp_pages:
+            fh.write('Redirect permanent %s %s\n' % (
+                href,
+                wp_pages[title],
+            ))
+    fh.write('Redirect permanent http://kjirou.sakura.ne.jp/mt/index.xml http://blog.kjirou.net/feed\n')
+    fh.write('Redirect permanent http://kjirou.sakura.ne.jp/mt/atom.xml http://blog.kjirou.net/feed\n')
+    fh.write('Redirect permanent http://kjirou.sakura.ne.jp/mt http://blog.kjirou.net\n')
 
 _main()
