@@ -7,6 +7,7 @@ Create .htaccess for redirect from old Movable Type 3 to new WordPress 3
 @dependency pyquery v1.2.2 <http://pypi.python.org/pypi/pyquery>
 '''
 import os
+import re
 import requests
 from pyquery import PyQuery
 
@@ -40,11 +41,11 @@ def _main():
     for title, href in mt_pages.items():
         if title in wp_pages:
             fh.write('Redirect permanent %s %s\n' % (
-                href,
+                re.sub(r'http://kjirou\.sakura\.ne\.jp', '', href),
                 wp_pages[title],
             ))
-    fh.write('Redirect permanent http://kjirou.sakura.ne.jp/mt/index.xml http://blog.kjirou.net/feed\n')
-    fh.write('Redirect permanent http://kjirou.sakura.ne.jp/mt/atom.xml http://blog.kjirou.net/feed\n')
-    fh.write('Redirect permanent http://kjirou.sakura.ne.jp/mt http://blog.kjirou.net\n')
+    fh.write('Redirect permanent /mt/index.xml http://blog.kjirou.net/feed\n')
+    fh.write('Redirect permanent /mt/atom.xml http://blog.kjirou.net/feed\n')
+    fh.write('Redirect permanent /mt http://blog.kjirou.net\n')
 
 _main()
